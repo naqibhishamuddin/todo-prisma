@@ -7,16 +7,15 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { Prisma, Todo } from '@prisma/client';
 import { TodosService } from './todos.service';
-import { CreateTodoDto } from './dto/create-todo.dto';
-import { UpdateTodoDto } from './dto/update-todo.dto';
 
 @Controller('todos')
 export class TodosController {
   constructor(private readonly todosService: TodosService) {}
 
   @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
+  create(@Body() createTodoDto: Prisma.TodoCreateInput) {
     return this.todosService.create(createTodoDto);
   }
 
@@ -26,17 +25,20 @@ export class TodosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.todosService.findOne(+id);
+  findOne(@Param('id') id: Todo['id']) {
+    return this.todosService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.todosService.update(+id, updateTodoDto);
+  update(
+    @Param('id') id: Todo['id'],
+    @Body() updateTodoDto: Prisma.TodoUpdateInput,
+  ) {
+    return this.todosService.update(id, updateTodoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.todosService.remove(+id);
+  remove(@Param('id') id: Todo['id']) {
+    return this.todosService.remove(id);
   }
 }
